@@ -117,7 +117,7 @@ postMessage 是 HTML5 XMLHttpRequest Level 2 中的 API，且是为数不多可�
 
 ### 1.3.3. 跨域资源共享（CORS）
 
-普通跨域请求：只服务端设置 Access-Control-Allow-Origin 即可，前端无须设置，若要带 cookie 请求：前后端都需要设置。
+普通跨域请求：只服务端设置 `Access-Control-Allow-Origin` 即可，前端无须设置，若要带 cookie 请求：前后端都需要设置。
 
 需注意的是：由于同源策略的限制，所读取的 cookie 为跨域请求接口所在域的 cookie，而非当前页。
 
@@ -222,7 +222,16 @@ WebSocket protocol 是 HTML5 一种新的协议。它实现了浏览器与服务
 
 ## 1.5. get 和 post 有什么区别？
 
-![区别](https://user-gold-cdn.xitu.io/2018/11/16/1671bc56731bf8a8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+| 区别             | GET                                                   | POST                                                                               |
+| ---------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 后退按钮/刷新    | 无害                                                  | 数据会被重新提交（浏览器告知用户数据会被重新提交）                                 |
+| 书签             | 可收藏为书签                                          | 不可收藏为书签                                                                     |
+| 缓存             | `application/x-www-form-urlencoded`                   | `application/x-www-form-urlencoded`或`multipart/form-data`为二进制数据使用多重编码 |
+| 历史             | 参数保留在浏览器历史中                                | 参数不会被保存在浏览器历史中                                                       |
+| 对数据长度的限制 | GET 方法向 URL 添加数据，URL 的长度最大是 2048 个字符 | 无限制                                                                             |
+| 对数据类型的限制 | 只允许 ASCII 字符                                     | 没有限制，也允许二进制数据                                                         |
+| 安全性           | 较 POST 差，因为所发送的数据是 URL 的一部分           | 比 GET 更安全，参数不会被保存在浏览器历史或 web 服务器日志中                       |
+| 可见性           | 数据在 URL 中对所有人都是可见的                       | 数据不会显示在 URL 中                                                              |
 
 ## 1.6. 你是怎么理解 ajax 的？Ajax 的原理能说一下吗？
 
@@ -258,7 +267,6 @@ searchInput.value = xmlHttp.responseText;
 - `JSON.stringify()` 从一个对象中解析出字符串
 
 ## 1.11. Jq 封装的 Ajax 有多少个 callback？一般页面的 loading 层（加载的动画）都是写到那个回调函数里面？
-
 
 ## 1.13. http 的常用的状态码遇到过那些？分别代表什么意思？
 
