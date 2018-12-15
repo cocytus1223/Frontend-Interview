@@ -15,7 +15,7 @@
 - `relative`：该关键字下，元素先放置在未添加定位时的位置，再在不改变页面布局的前提下调整元素位置（因此会在此元素未添加定位时所在位置留下空白）。
 - `absolute`：不为元素预留空间，通过指定元素相对于最近的非 static 定位祖先元素的偏移，来确定元素位置。绝对定位的元素可以设置外边距（margins），且不会与其他边距合并。
 - `fixed`：不为元素预留空间，而是通过指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变。打印时，元素会出现在的每页的固定位置。fixed 属性会创建新的层叠上下文。当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。
-- `sticky`：盒位置根据正常流计算(这称为正常流动中的位置)，然后相对于该元素在流中的 flow root（BFC）和 containing block（最近的块级祖先元素）定位。在所有情况下（即便被定位元素为 table 时），该元素定位均不对后续元素造成影响。当元素 B 被粘性定位时，后续元素的位置仍按照 B 未定位时的位置来确定。`position: sticky` 对 `table` 元素的效果与 `position: relative` 相同。
+- `sticky`：在屏幕范围（viewport）时该元素的位置并不受到定位影响（设置是 top、left 等属性无效），当该元素的位置将要移出偏移范围时，定位又会变成 fixed，根据设置的 left、top 等属性成固定位置的效果。
 
 ## 浮动会带来哪些影响？哪些方式可以清除浮动？
 
@@ -161,3 +161,34 @@ BFC 的创造条件：
 - 需要预处理工具。
 - 重新编译的时间可能会很慢。
 - Less 中，变量名称以`@`作为前缀，容易与 CSS 关键字混淆，如`@media`、`@import` 和`@font-face`。
+
+## 如何防止用户复制网页中的文本信息？
+
+## CSS3 的新特性
+
+1. 颜色：新增 RGBA、HSLA 模式
+2. 文字阴影：text-shadow
+3. 边框：圆角（border-radius）、边框阴影(box-shadow)
+4. 背景：背景图片尺寸(background-size)、背景图片原点(background-origin)、背景图片裁切区域(background-clip)
+5. 渐变：linear-gradient、radial-gradient
+6. 盒子模型：box-sizing
+7. 过渡：transition，可实现动画
+8. 自定义动画：animate @keyfrom
+9. 媒体查询：@media screen and (width:800px)
+10. border-image
+11. 2D 转换：transform：translate(x,y)、rotate(x,y)、skew(x,y)、scale(x,y)
+12. 3D 转换
+13. 字体图标：font-face
+14. 弹性布局：flex
+
+## CSS3 动画和 JS 动画主要的区别
+
+1. 功能涵盖面，JS 比 CSS3 大
+   - 定义动画过程的@keyframes 不支持递归定义，如果有多种类似的动画过程，需要调节多个参数来生成的话，将会有很大的冗余，而 JS 则天然可以以一套函数实现多个不同的动画过程
+   - 事件尺度上，@keyframes 的动画粒度粗，而 JS 动画粒度可以很细
+   - CSS3 动画里被支持的时间函数非常少，不够灵活
+   - 以现有接口，CSS3 动画无法做到支持两个以上的状态变化
+2. 实现/重构难度不一，CSS3 比 JS 更简单，性能调优方向固定
+3. 对于帧速表现不好的低版本浏览器，CSS3可以做到自然降级，而JS需要撰写额外代码
+4. CSS动画有天然事件支持，JS需要自己写事件
+5. CSS3有兼容性问题，而JS大多时候没有兼容性问题
