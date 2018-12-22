@@ -141,3 +141,25 @@
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
 ```
+
+## HTML5 drag api
+
+- dragstart：事件主体是被拖放元素，在开始拖放被拖放元素时触发，。
+- darg：事件主体是被拖放元素，在正在拖放被拖放元素时触发。
+- dragenter：事件主体是目标元素，在被拖放元素进入某元素时触发。
+- dragover：事件主体是目标元素，在被拖放在某元素内移动时触发。
+- dragleave：事件主体是目标元素，在被拖放元素移出目标元素是触发。
+- drop：事件主体是目标元素，在目标元素完全接受被拖放元素时触发。
+- dragend：事件主体是被拖放元素，在整个拖放操作结束时触发
+
+## iframe 是什么？有什么缺点？
+
+定义：iframe 元素会创建包含另一个文档的内联框架
+
+提示：可以将提示文字放在`<iframe></iframe>`之间，来提示某些不支持 iframe 的浏览器
+
+缺点：
+
+- 会阻塞主页面的 onload 事件
+- 搜索引擎无法解读这种页面，不利于 SEO
+- iframe 和主页面共享连接池，而浏览器对相同区域有限制所以会影响性能。
