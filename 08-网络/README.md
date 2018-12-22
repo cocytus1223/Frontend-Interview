@@ -1,6 +1,6 @@
-# 网络类
+# 1. 网络类
 
-## 一个页面从输入 url 到页面加载显示完成，这个过程发生了什么？
+## 1.1. 一个页面从输入 url 到页面加载显示完成，这个过程发生了什么？
 
 1. 在浏览器地址栏输入 URL
 
@@ -92,7 +92,7 @@
 
 23. **显示页面**（HTML 解析过程中会逐步显示页面）
 
-## http 的常用的状态码遇到过那些？分别代表什么意思？
+## 1.2. http 的常用的状态码遇到过那些？分别代表什么意思？
 
 - 1xx：指示信息——表示请求已接受，继续处理
 - 2xx：成功——表示请求已被成功接收
@@ -106,13 +106,25 @@
 302 Found：临时重定向，所请求的页面已经临时转移至新的 url
 304 Not MOdified：缓存，客户端有缓冲的文档并发出了一个条件性的请求，服务器告诉客户，原来缓冲的文档还可以继续使用
 400 Bad Request：客户端有语法错误，不能被服务器所理解
-401 Unauthorized：请求未经授权，这个状态码必须和 WWW-Authenticate 报头域一起使用
-403 Forbidden：对被请求页面的访问被禁止
+401 Unauthorized：请求未经授权，这个状态码必须和 WWW-Authenticate 报头域一起使用，当前请求需要用户验证
+403 Forbidden：对被请求页面的访问被禁止，服务器已经得到请求，但是拒绝执行
 404 Not Found：请求资源不存在
 500 Internal Server Error：服务器发生不可预期的错误原来缓冲的文档还可以继续使用
 503 Server Unavailable：请求未完成，服务器临时过载或宕机，一段时间后可能恢复正常
 
-## get 和 post 的区别
+补充：400 状态码，请求无效
+
+- 产生原因：
+
+  - 前端提交数据的字段名称和字段类型与后台的实体没有保持一致
+  - 前端提交到后台的数据应该是 json 字符串类型，但是前端没有将对象 JSON.stringify 转化成字符串。
+
+- 解决方法：
+
+  - 对照字段的名称，保持一致性
+  - 将 obj 对象通过 JSON.stringify 实现序列化
+
+## 1.3. get 和 post 的区别
 
 1. GET 在浏览器回退时是无害的，而 POST 会再次提交请求 ☆
 2. GET 产生的 URL 地址是可以被收藏的，而 POST 不可能
@@ -124,7 +136,7 @@
 8. GET 比 POST 更不安全，因为参数直接暴露在 URL 上，所以不能用来传递敏感信息
 9. GET 参数通过 URL 传递，POST 是放在 Request body 中 ☆
 
-## get 请求传参长度的误区
+## 1.4. get 请求传参长度的误区
 
 误区：我们经常说 get 请求参数的大小存在限制，而 post 请求的参数大小是无限制的。
 
@@ -135,7 +147,49 @@
 - 不同的浏览器和 WEB 服务器，限制的最大长度不一样
 - 要支持 IE，则最大长度为 2083byte，若只支持 Chrome，则最大长度 8182byte
 
-## 补充 get 和 post 请求在缓存方面的区别
+## 1.5. 补充 get 和 post 请求在缓存方面的区别
 
 - get 请求类似于查找的过程，用户获取数据，可以不用每次都与数据库连接，所以可以使用缓存。
 - post 不同，post 做的一般是修改和删除的工作，所以必须与数据库交互，所以不能使用缓存。因此 get 请求适合于请求缓存。
+
+## 1.6. WebSocket 的实现和应用
+
+### 1.6.1. 什么是 WebSocket？
+
+WebSocket 是 HTML5 中的协议，支持持久连续，http 协议不支持持久性连接。Http1.0 和 HTTP1.1 都不支持持久性的链接，HTTP1.1 中的 keep-alive，将多个 http 请求合并为 1 个
+
+### 1.6.2. WebSocket 是什么样的协议，具体有什么优点？
+
+HTTP 的生命周期通过 Request 来界定，也就是 Request 一个 Response，那么在 Http1.0 协议中，这次 Http 请求就结束了。在 Http1.1 中进行了改进，是的有一个 connection：Keep-alive，也就是说，在一个 Http 连接中，可以发送多个 Request，接收多个 Response。但是必须记住，在 Http 中一个 Request 只能对应有一个 Response，而且这个 Response 是被动的，不能主动发起。
+WebSocket 是基于 Http 协议的，或者说借用了 Http 协议来完成一部分握手，在握手阶段与 Http 是相同的。我们来看一个 websocket 握手协议的实现，基本是 2 个属性，upgrade，connection。
+基本请求如下：
+
+```html
+GET /chat HTTP/1.1 Host: server.example.com Upgrade: websocket Connection:
+Upgrade Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw== Sec-WebSocket-Protocol:
+chat, superchat Sec-WebSocket-Version: 13 Origin: http://example.com
+```
+
+多了下面 2 个属性：
+
+```html
+Upgrade:webSocket Connection:Upgrade 告诉服务器发送的是websocket
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw== Sec-WebSocket-Protocol: chat,
+superchat Sec-WebSocket-Version: 13
+```
+
+## http2.0
+
+简要概括：http2.0 是基于 1999 年发布的 http1.0 之后的首次更新。
+
+- 提升访问速度（可以对于，请求资源所需时间更少，访问速度更快，相比 http1.0）
+- 允许多路复用：多路复用允许同时通过单一的 HTTP/2 连接发送多重请求-响应信息。改善了：在 http1.1 中，浏览器客户端在同一时间，针对同一域名下的请求有一定数量限制（连接数量），超过限制会被阻塞。
+- 二进制分帧：HTTP2.0 会将所有的传输信息分割为更小的信息或者帧，并对他们进行二进制编码
+- 首部压缩
+- 服务器端推送
+
+## fetch 发送 2 次请求的原因
+
+fetch 发送 post 请求的时候，总是发送 2 次，第一次状态码是 204，第二次才成功？
+
+原因很简单，因为用 fetch 的 post 请求的时候，导致 fetch 第一次发送了一个 Options 请求，询问服务器是否支持修改的请求头，如果服务器支持，则在第二次中发送真正的请求。
