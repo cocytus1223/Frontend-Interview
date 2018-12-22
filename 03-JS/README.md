@@ -1,171 +1,40 @@
 # JavaScript
 
-## 谈谈你对 this 的理解？
+## js 各种位置的区别
 
-this 是 JavaScript 中的一个关键字。
-是函数运行时，在函数体内自动生成的一个对象，只能在函数体内部使用。
+### DOM 对象
 
-1. 函数调用：this 指向 window
-2. 对象方法调用：this 指向这个上级对象
-3. 构造函数调用：this 指向这个生成的新对象
-4. apply：this 指向这个函数的第一个参数
+#### 只读属性
 
-## 什么是闭包？闭包产生的背景？有什么问题？怎么解决？举一个闭包的例子？（重要）
+所谓的只读属性指的是 DOM 节点的固有属性，该属性只能通过 js 去获取而不能通过 js 去设置，而且获取的值是只有数字并不带单位的（px,em 等），如下：
 
-- 概念：能够读取其他函数内部变量的函数
-- 形成条件：有两个函数嵌套，内部函数访问了外部函数的变量
-- 作用：
-  - 使用函数内部的变量在函数执行完后, 仍然存活在内存中(延长了局部变量的生命周期)
-  - 让函数外部可以访问到函数内部的变量或函数
-- 存在的问题：闭包占用的内存不会被释放，如果滥用闭包会造成内存泄露
-- 解决方案：js 垃圾回收机制：标记清除法、引用计数法
+1. clientWidth 和 clientHeight
+   该属性指的是元素的可视部分宽度和高度，即 padding+content，如果没有滚动条，即为元素设定的高度和宽度，如果出现滚动条，滚动条会遮盖元素的宽高，那么该属性就是其本来宽高减去滚动条的宽高
+2. offsetWidth 和 offsetHeight
+   表示可视区域的宽度和高度，即 border+padding+content 的宽度和高度并包含滚动条，该属性和其内部的内容是否超出元素大小无关，只和本来设定的 border 以及 width 和 height 有关
+3. clientTop 和 clientLeft：表示边框 border 的厚度，在未指定的情况下一般为 0
+4. offsetLeft 和 offsetTop
+   当前元素，相对于其 offsetParent 左边距离和上边距离，即当前元素的 border 到包含它的 offsetParent 的 border 的距离
+5. scrollHeight 和 scrollWidth
+   表示了所有区域的高度，包含了因为滚动被隐藏的部分。
 
-- 应用：
-  - 定义 js 模块：
-    具有特定功能的 js 文件，将所有的数据和功能都封装在一个函数内部(私有的)，只向外暴露一个包含 n 个方法的对象或函数。模块的使用者只需要通过模块暴露的对象调用方法来实现对应的功能
+#### 可读可写属性
 
-## Js 的原型和原型链怎么理解？原型链有什么应用？
+1. scrollTop 和 scrollLeft
+   当元素其中的内容超出其宽高的时候，元素被卷起的高度和宽度。
+2. obj.style.\*属性
+   对于一个 dom 元素，它的 style 属性返回的是一个对象，这个对象中的任意一个属性是可读写的。如 obj.style.top,obj.style.wdith 等，在读的时候，他们返回的值常常是带有单位的(如 px),同时，对于这种方式，
+   它只能够获取到该元素的行内样式，而并不能获取到该元素最终计算好的样式，这就是在读取属性值得时候和以上只读属性的区别，要获取计算好的样式，请使用 obj.currentstyle（IE）和 getComputedStyle(IE 之外的浏览器)。另一方面，这些属性能够被赋值，js 运动的原理就是通过不断修改这些属性的值而达到其位置改变的，需要注意的是，给这些属性赋值的时候需要带单位的要带上单位，否则不生效。
 
-- 原型：每一个构造函数都有 prototype 属性，函数的 prototype 属性值就是原型。
-- 原型链：任何一个对象都有自己的原型对象，原型对象本身又是一个对象，一环扣一环形成了一个链式结构，成为原型链。
-- 应用：A 能通过原型链获取到 B、C 中的属性方法
+### Event 对象
 
-## 你对 call 、 apply 、bind 怎么理解？
+在 js 中，对于元素的运动的操作通常都会涉及到 event 对象，而 event 对象也存在很多位置属性，且由于浏览器兼容性问题会导致这些属性间相互混淆
 
-函数的上下文调用模式，主要用来改变 this 的指向，实现继承。
-
-- func.call(obj, v1, v2)
-  - 第一个参数：改变 this 的指向
-  - 后面的参数：传入的实参
-  - 如果没有参数或第一个参数为 null，this 指向 window
-- func.apply(obj,[v1, v2])
-  - 第一个参数：改变 this 的指向
-  - 第二个参数：一个数组或伪数组
-- func.bind(obj,v1,v2)()
-  - 不会调用函数，克隆一个新的函数
-  - 第一个参数：改变 this 的指向
-  - 第二个参数：传入的实参
-  - bind()是将函数返回，因此后面还需要加()才能调用。
-
-## 继承有哪些方式？你的项目上有应用过继承吗？有自己封装过东西吗？
-
-1. 借助构造函数
-
-   ```JavaScript
-    function Parent1() {
-        this.name = 'parent1 的属性';
-    }
-
-    function Child1() {
-        Parent1.call(this);         //【重要】此处用 call 或 apply 都行：改变 this 的指向
-        this.type = 'child1 的属性';
-    }
-
-    console.log(new Child1);
-   ```
-
-2. 原型链
-
-   ```JavaScript
-    /*
-    通过原型链实现继承
-     */
-    function Parent() {
-        this.name = 'Parent 的属性';
-    }
-
-    function Child() {
-        this.type = 'Child 的属性';
-    }
-
-    Child.prototype = new Parent();
-
-    console.log(new Child());
-   ```
-
-3. 构造函数+原型链
-
-   ```JavaScript
-    /*
-    组合方式实现继承：构造函数、原型链
-     */
-    function Parent3() {
-        this.name = 'Parent 的属性';
-        this.arr = [1, 2, 3];
-    }
-
-    function Child3() {
-        Parent3.call(this); //【重要1】执行 parent方法
-        this.type = 'Child 的属性';
-    }
-    Child3.prototype = new Parent3(); //【重要2】第二次执行parent方法
-
-    var child = new Child3();
-   ```
-
-## Js 有哪些内置对象？你工作中常用那种？列举几个你常用的方法？
-
-- Date
-  - getDate() 获取日 1-31
-  - getDay() 获取星期 0-6（0 代表周日）
-  - getMonth() 获取月 0-11（1 月从 0 开始）
-  - getFullYear() 获取完整年份（浏览器都支持）
-  - getHours() 获取小时 0-23
-  - getMinutes() 获取分钟 0-59
-  - getSeconds() 获取秒 0-59
-  - getMilliseconds() 获取毫秒 （1s = 1000ms）
-  - getTime () 返回累计毫秒数(从 1970/1/1 午夜)
-- Array
-- Math
-  - Math.max() 求最大值
-  - Math.min() 求最小值
-  - Math.abs() 取绝对值
-  - Math.floor() 向下取整
-  - Math.ceil() 向上取整
-  - Math.round() 四舍五入取整
-  - Math.random() 随机数 0-1
-
-## Js 中深拷贝和浅拷贝的区别？
-
-- 浅拷贝
-  对于对象或数组类型，当我们将 a 赋值给 b，然后更改 b 中的属性，a 也会随着变化。
-  也就是说，a 和 b 指向了同一块堆内存，所以修改其中任意的值，另一个值都会随之变化，这就是浅拷贝。
-
-- 深拷贝
-  那么相应的，如果给 b 放到新的内存中，将 a 的各个属性都复制到新内存里，就是深拷贝。
-  也就是说，当 b 中的属性有变化的时候，a 内的属性不会发生变化。
-
-## 事件包含哪些阶段？
-
-1. 事件的捕获阶段
-2. 事件的目标阶段（触发自己的事件）
-3. 事件的冒泡阶段
-
-## 什么是事件委托？事件委托的原理是什么？他有那些应用场景？
-
-1. 当网页中需要触发事件的对象比较多的时候，为了避免内存泄漏，我们把事件委托到其父对象上，借助事件冒泡机制，可以将事件委托到 body，document 等元素上，这样等于一个页面就只有一个事件触发，避免直接把事件添加到多个对象上
-2. 动态加载的数据是不能直接进行事件的绑定，这时就需要使用事件委托。
-   例如：`$(body).on('click','#div',function(){})`
-
-## 如何阻止事件冒泡和事件的默认行为？
-
-- 阻止浏览器的默认行为
-  - IE9 之前：window.event.returnValue = false;
-  - IE9+ FF Chrome：e.preventDefault();
-- 停止事件冒泡
-  - IE9+ FF Chrome：e.stopPropagation();
-  - event.canceBubble = true; //ie9 之前
-- 原生 JavaScript 中，return false;只阻止默认行为，不阻止冒泡，jQuery 中的 return false;既阻止默认行为，又阻止冒泡
-
-## Js 注册事件有几种方式？有什么区别吗？
-
-- DOM 0 级事件
-
-- DOM 2 级事件
-
-## Jq 注册事件有几种方式？他们的区别是什么？举一个事件委托的例子？
-
-## prop 和 attr 的区别
-
-- 对于 HTML 元素本身就带有的固有属性，在处理时，使用 prop 方法。
-- 对于 HTML 元素我们自己自定义的 DOM 属性，在处理时，使用 attr 方法
+1. clientX 和 clientY
+   这对属性是当事件发生时，鼠标点击位置相对于浏览器（可视区）的坐标，即浏览器左上角坐标的（0,0），该属性以浏览器左上角坐标为原点，计算鼠标点击位置距离其左上角的位置，不管浏览器窗口大小如何变化，都不会影响点击位置的坐标。
+2. screenX 和 screenY
+   事件发生时鼠标相对于屏幕的坐标，以设备屏幕的左上角为原点，事件发生时鼠标点击的地方即为该点的 screenX 和 screenY 值
+3. offsetX 和 offsetY
+   当事件发生时，鼠标点击位置相对于该事件源的位置，即点击该 div，以该 div 左上角为原点来计算鼠标点击位置的坐标
+4. pageX 和 pageY
+   事件发生时鼠标点击位置相对于页面的位置，通常浏览器窗口没有出现滚动条时，该属性和 event.clientX 及 event.clientY 是等价的，但是当浏览器出现滚动条的时候，pageX 通常会大于 clientX，因为页面还存在被卷起来的部分的宽度和高度
